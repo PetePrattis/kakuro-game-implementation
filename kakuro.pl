@@ -11,9 +11,9 @@ the background to black and the color of the letters to either white or red.
 At the same time the use of a font that recognizes unicode characters (such as the default 'Courier') 
 due to use in my character code '' (space) will result in the Kakuro-Puzzle shape being uniform
 */
-:-  ansi_format([bold,bg(black),fg(white)],'[  ][~w][~w][~w][  ]~n',[17,26,15]), %1η σειρά
+:-  ansi_format([bold,bg(black),fg(white)],'[  ][~w][~w][~w][  ]~n',[17,26,15]), %1st row
 
-	ansi_format([bold,bg(black),fg(white)], '[~w][', [24]), %2η σειρά
+	ansi_format([bold,bg(black),fg(white)], '[~w][', [24]), %2nd row
 	ansi_format([bold,fg(red),bg(black)], '~w', ['A']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w[',[']']),
 	ansi_format([bold,fg(red),bg(black)], '~w', ['B']),
@@ -21,7 +21,7 @@ due to use in my character code '' (space) will result in the Kakuro-Puzzle shap
 	ansi_format([bold,fg(red),bg(black)], '~w', ['C']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w[  ]~n',[']']),
 	
-	ansi_format([bold,bg(black),fg(white)], '[~w][', [11]), %3η σειρά
+	ansi_format([bold,bg(black),fg(white)], '[~w][', [11]), %3rd row
 	ansi_format([bold,fg(red),bg(black)], '~w', ['E']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w[',[']']),
 	ansi_format([bold,fg(red),bg(black)], '~w', ['F']),
@@ -29,7 +29,7 @@ due to use in my character code '' (space) will result in the Kakuro-Puzzle shap
 	ansi_format([bold,fg(red),bg(black)], '~w', ['G']),
 	ansi_format([bold,bg(black),fg(white)], ' ][~w]~n',[13]),
 	
-	ansi_format([bold,bg(black),fg(white)], '[  ][~w][', [22]), %4η σειρά	
+	ansi_format([bold,bg(black),fg(white)], '[  ][~w][', [22]), %4th row	
 	ansi_format([bold,fg(red),bg(black)], '~w', ['J']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w[',[']']),
 	ansi_format([bold,fg(red),bg(black)], '~w', ['K']),
@@ -37,7 +37,7 @@ due to use in my character code '' (space) will result in the Kakuro-Puzzle shap
 	ansi_format([bold,fg(red),bg(black)], '~w', ['L']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w~n',[']']),
 
-	ansi_format([bold,bg(black),fg(white)], '[  ][~w][', [14]), %5η σειρά	
+	ansi_format([bold,bg(black),fg(white)], '[  ][~w][', [14]), %5th row	
 	ansi_format([bold,fg(red),bg(black)], '~w', ['N']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w[',[']']),
 	ansi_format([bold,fg(red),bg(black)], '~w', ['O']),
