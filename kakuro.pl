@@ -1,30 +1,15 @@
-/**-----------------------------------------------------------------------------
-3η προαιρετική εργασία
-Αναπτύξτε Prolog πρόγραμμα επίλυσης του παιχνιδιού Kakuro (www.kakuro.net). 
-Ένας τρόπος μοντελοποίησης του παιχνιδιού είναι με την ανάθεση μίας μεταβλητής για κάθε κενό τετράγωνο.
-1. Ορίστε το κατηγόρημα line-2 such που αληθεύει εάν μια αριθμητική λίστα L 
-αθροίζει σε N και ικανοποιεί τον περιορισμό του Kakuro ότι μόνο οι αριθμοί 1, 2, . . . , 9 
-μπορούν να εμφανίζονται και μόνο μία φορά.
-2. Ορίστε το κατηγόρημα solve-1 που υπολογίζει λίστα που είναι η λύση του προβλήματος. 
-Δηλ. η λίστα [A,B,C,E,...,P] είναι λύση εαν όλες οι γραμμές και στήλες ικανοποιούν τις σχετικές συνθήκες.
-3. Ορίστε το κατηγόρημα solve-0 που υπολογίζει και εκτυπώνει τη λίστα.
--------------------------------------------------------------------------------*/
-
-% Παναγιώτης Πράττης Π15120
+% Παναγιώτης Πράττης / Panagiotis Prattis
 
 
-/* Εισαγάγω την βιβλιοθήκη CLP(FD) - Constraint Logic Programming over Finite Domains
-(Προγραμματισμός Λογικής Περιορισμού σε Πεπερασμένους Τομείς), το οποίο επεκτείνει τις 
-δυνατότητες χρήσης ακέραιων αριθμών σύμφωνα πάντα με την σχεσιακή φύση της γλώσσας Prolog.
+/* I introduce the CLP (FD) library - Constraint Logic Programming over Finite Domains, 
+which extends the possibilities of using integers according to the relational nature of the Prolog language.
 */
 :- use_module(library(clpfd)).
 
-/*χρησιμοποιώντας το κατηγόρημα ansi_format-3 μπορώ να χρησιμοποιήσω ANSI χαρακτηριστικά 
-για την μορφοποίηση κειμένου αλλάζοντας το κείμενο σε bold, το φόντο σε μαύρο και το
-χρώμμα των γραμμάτων είτε σε άσπρο είτε σε κόκκινο.
-Παράλληλα η χρήση μιας γραμματοσειράς που αναγνωρίζει unicode χαρακτήρες (όπως για 
-παράδειγμα το default 'Courier') λόγω χρήσης στον κώδικα μου του χαρακτήρα ' ' (space)
-θα έχει σαν αποτέλεσμα να εμφανιστεί το σχήμα του Kakuro-Puzzle ομοιόμορφο 
+/*using ansi_format-3 pointer I can use ANSI attributes for text formatting by changing the text to bold, 
+the background to black and the color of the letters to either white or red.
+At the same time the use of a font that recognizes unicode characters (such as the default 'Courier') 
+due to use in my character code '' (space) will result in the Kakuro-Puzzle shape being uniform
 */
 :-  ansi_format([bold,bg(black),fg(white)],'[  ][~w][~w][~w][  ]~n',[17,26,15]), %1η σειρά
 
@@ -60,16 +45,16 @@
 	ansi_format([bold,fg(red),bg(black)], '~w', ['P']),
 	ansi_format([bold,bg(black),fg(white)], ' ~w~n',[']']).
 	
-/* τυπώνω οδηγίες με την εκτέλεση*/
+/* print instructions with execution*/
 :- format('~nType "line(X,Y).", or "solve(X)." or "solve."  ~n'),
  format('In all cases X can be a variable X that will stand for a list, ~nor a numerical list or a list with variables,~nY stands for the sum of the numbers of a row or column ~n').
 
-/* ορίζω το κατηγόρημα pair-2 όπου το 1ο argument είναι το πλήθος των θέσεων 
-σε μια σειρά ή στήλη για αριθμούς μέσα στο puzzle και το 2ο argument 
-έιναι το άθροισμα που πρέπει να έχουν αυτοί οι αριθμοί, αυτά τα ζευγάρια είναι 
-προκαθορισμένα στο συγκεκριμένο Kakuro-Puzzle
+/* 
+I define the pair-2 predicate where the 1st argument is the number of positions in a row or column for 
+numbers in the puzzle and the 2nd argument is the sum these numbers must have, 
+these pairs are predefined in this particular Kakuro-Puzzle
 */
-pair(3, 24). /*παράδειγμα: σε μια σειρά ή στήλη υπάρχουν 3 κενές θέσεις για 3 αριθμούς με άθροισμα 24*/
+pair(3, 24). /*Example: in a row or column there are 3 spaces for 3 numbers with a sum of 24*/
 pair(3, 11).
 pair(3, 22).
 pair(3, 14).
@@ -78,44 +63,41 @@ pair(4, 26).
 pair(4, 15).
 pair(2, 13).
 
-/* το κατηγόρημα line-2 δέχεται 2 arguments, το 1ο είναι η αριθμητική λίστα για μια 
-σειρά ή στήλη και το 2ο είναι το αποτέλεσμα του αθροίσματος αυτών των αριθμών
+/* 
+the predicate line-2 accepts 2 arguments, 1st is the numeric list for a row or column, 
+and 2nd is the result of adding these numbers
 */	
 line(L, N) :-
 
-	/* το κατηγόρημα all_distinct(Μεταβλητές) είναι διαθέσιμο με την εισαγωγή της βιβλιοθήκης clpfd, 
-	τα στοιχεία ή μεταβλητές πρέπει να είναι διαφορετικά μεταξύ τους
+	/* the all_distinct predicate is available with the insertion of the clpfd library, 
+	the elements or variables must be different
 	*/
-	all_distinct(L), /* η λίστα πρέπει να περιέχει διαφορετικούς αριθμούς*/
+	all_distinct(L), /* the list must contain different numbers*/
 	
-	/* στο συγκεκριμένο Kakuro-Puzzle τα αθροίσματα των αριθμών σε σειρά ή στήλη
-	μπορούν να είναι μόνο τα εξείς:
-	*/
+	/* in this Kakuro-Puzzle the numbers in a row or column can only be:*/
 	member(N, [14,22,11,24,17,26,15,13]), /* οπότε το Ν πρέπει να ανήκει στην λίστα αυτήν*/
 	
-	/* το κατηγόρημα Λίστα-ins-Πεδίο_Ορισμού είναι διαθέσιμο με την εισαγωγή της βιβλιοθήκης clpfd,
-	τα στοιχεία ή μεταβλητές της λίστας πρέπει να ανήκουν στο δωθέν Πεδίο Ορισμού
+	/* the List-ins-... predicate is available with the insertion of the clpfd library, 
+	the list elements or variables must belong to the specified Scope field
 	*/
-	L ins 0..9, /* η λίστα πρέπει να περιέχει αριθμούς από το 0-9*/
+	L ins 0..9, /* the list must contain numbers from 0-9*/
 	
-	length(L, X), /* το μήκος της λίστας αποθηκεύεται στην μεταβλητή Χ*/
+	length(L, X), /* the length of the list is stored in the variable X*/
 	
-	pair(X, N), /* πρέπει να υπάρχει αντιστοίχηση μήκους λίστας και αθροίσματος 
-	από τα προκαθορισμένα ζευγάρια*/
+	pair(X, N), /* the list and sum length must be matched by the predefined pairs*/
 	
-	sum_list(L, N). /* πρέπει το άθροισμα των αριθμών στην λίστα να ισούται με το δωθέν άθροισμα*/
+	sum_list(L, N). /* the sum of the numbers in the list must be equal to the sum given*/
 	
 
-/* Το κατηγόρημα solve-1 δέχεται μια μεταβλητή που αντιστοιχεί σε λίστα ή μια λίστα 
-με μεταβλητές ή μια αριθμητική λίστα, αν εισαχθεί μεταβλητή εμφανίζονται οι αριθμητικές λίστες
-και το κάθε λυμένο Kakuro-Puzzle, αν εισαχθεί μια λίστα με μεταβλητές εμφανίζονται και οι τιμές
-της κάθε μεταβλητής, ενώ αν εισαχθεί μια αριθμητική λίστα εμφανίζει το λυμένο Kakuro-Puzzle
-και true αλλιώς αν είναι λάθος η αριθμητική λίστα εμφανίζει false
+/* The solve-1 predicate accepts a variable that corresponds to a list or a list of variables or a numeric list, 
+if a variable is entered the numeric lists are displayed and each solved Kakuro-Puzzle, if a list of variables is entered, 
+and the values of each variable are displayed. , if a numeric list is entered it displays the Kakuro-Puzzle solved 
+and true otherwise it is false the numeric list shows false
 */
 
 solve(KP) :-
 	
-	/* οι σειρές και οι στήλες με τις αντίστοιχες μεταβλητές τους
+	/* rows and columns with their respective variables
 	*/
 	L1 = [A,B,C], 
 	L2 = [E,F,G], 
@@ -126,25 +108,24 @@ solve(KP) :-
 	C3 = [C,G,K,O], 
 	C4 = [L,P],
     
-	KP = [A,B,C,E,F,G,J,K,L,N,O,P], /* η λίστα των μεταβλητών*/
+	KP = [A,B,C,E,F,G,J,K,L,N,O,P], /* the list of variables*/
 	
-	KP ins 0..9, /* οι μεταβλητές πρέπει να είναι απο 0 έως 9*/	
+	KP ins 0..9, /* the variables must be from 0 to 9*/	
 	
-    /* το κατηγόρημα Χ#=Υ είναι διαθέσιμο με την εισαγωγή της βιβλιοθήκης clpfd,
-	είναι αριθμητικός περιορισμός και είναι η έκφραση Χ ισούται με Υ
-	και αντικαθιστά τις κλασσικές αριθμητικές εκφράσεις λόγω της αύξησης 
-	της λειτουργικότητας και γενικότητας 
-	*/
-	A + B + C #= 24, /*οι περιορισμοί των αθτοισμάτων ανά σειρά και στήλη*/
+    /* 
+    the predicate X # = Y is available with the introduction of the clpfd library, is a numerical constraint and is the 
+    expression X equals Y and replaces the classical arithmetic expressions due to increased functionality and generality 
+    */
+    A + B + C #= 24, /*the constraints of the sums per row and column*/
     E + F + G #= 11,
     J + K + L #= 22,
     N + O + P #= 14,
-	A + E #= 17,
-	B + F + J + N #= 26,
+    A + E #= 17,
+    B + F + J + N #= 26,
     C + G + K + O #= 15,
     L + P #= 13,
 	
-	all_distinct(L1), /* κάθε σειρά και στήλη πρέπει να έχει διαφορετικούς αριθμούς*/
+	all_distinct(L1), /* each row and column must have different numbers*/
 	all_distinct(L2),
 	all_distinct(L3),
 	all_distinct(L4),
@@ -153,13 +134,12 @@ solve(KP) :-
 	all_distinct(C3),
 	all_distinct(C4),
 	
-	/* το κατηγόρημα label-1 είναι διαθέσιμο με την εισαγωγή της βιβλιοθήκης clpfd,
-	μέσω αυτού μπορούμε να δοκιμάζουμε συστηματικά τιμές για τις μεταβλητές πεπερασμένου
-	Πεδίου Ορισμού μέχρι αυτές να πάρουν αποδεκτή τιμή
+	/* the predicate label-1 is available with the introduction of the clpfd library, through which we can 
+	systematically test values for finite field variables until they get an acceptable value
 	*/
-	label(KP), /* οπότε μέσω του label-1 μπορώ να εμφανίζω τις μεταβλητές χωρίς κάποιο σφάλμα*/
+	label(KP), /* so with label-1 I can display the variables without any error*/
 	format('~n[ ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w]~n', [A,B,C,E,F,G,J,K,L,N,O,P]), 
-	/* εμφάνιση της αριθμητικής λίστας και του ολοκληρωμένου λυμένου Kakuro-Puzzle*/
+	/* displaying the numeric list and the complete Kakuro-Puzzle solution*/
 	ansi_format([bold,bg(black),fg(white)],'[  ][~w][~w][~w][  ]~n',[17,26,15]),
 
 	ansi_format([bold,bg(black),fg(white)], '[~w][', [24]), 
@@ -194,11 +174,11 @@ solve(KP) :-
 	ansi_format([bold,fg(red),bg(black)], '~w', [P]),
 	ansi_format([bold,bg(black),fg(white)], ' ~w~n',[']']).
 	
-/* με το κατηγόρημα solve-0 εμφανίζονται όλες οι πιθανές λύσεις
-για το δωθέν Kakuro-Puzzle*/	
+/* solve-0 shows all possible solutions
+for the given Kakuro-Puzzle*/	
 solve :-
 	
-	/* αντίστοιχα όπως και στο solve-1*/
+	/* respectively as in solve-1*/
 	L1 = [A,B,C], 
 	L2 = [E,F,G], 
 	L3 = [J,K,L], 
@@ -232,8 +212,8 @@ solve :-
 	
 	label(KP),
 	format('[~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w, ~w]~n', [A,B,C,E,F,G,J,K,L,N,O,P]), 
-	/* εμφάνιση της αριθμητικής λίστας, του ολοκληρωμένου λυμένου Kakuro-Puzzle
-	και true έως ότου τελειώσουν οι πιθανές λύσεις
+	/* displaying the arithmetic list, the complete Kakuro-Puzzle, 
+	and true until the possible solutions are complete
 	*/
 	ansi_format([bold,bg(black),fg(white)],'[  ][~w][~w][~w][  ]~n',[17,26,15]),
 
